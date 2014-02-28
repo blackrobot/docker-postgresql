@@ -1,0 +1,19 @@
+#!/bin/bash
+
+TERM=linux
+
+set -e
+
+DB_PASSWORD="$(</dev/urandom tr -dc '[:alnum:]' | head -c 20)"
+
+echo
+echo -e "\tCreating the superuser:"
+echo -e "\t  user -> \033[1m${DB_USERNAME}\033[0m"
+echo -e "\t  pass -> \033[1m${DB_PASSWORD}\033[0m"
+echo
+
+su postgres -c "psql -Eq <<-EOF
+    CREATE ROLE $DB_USERNAME WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+    ALTER ROLE $DB_USERNAME WITH SUPERUSER;
+    ALTER ROLE $DB_USERNAME WITH LOGIN;
+EOF"
