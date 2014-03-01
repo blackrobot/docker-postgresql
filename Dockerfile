@@ -2,35 +2,34 @@
 
 FROM damon/base
 
+ENV LANGUAGE en_US.UTF-8
+
 # Add the repository to our sources list
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /etc/apt/sources.list && \
     curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update -qq
 
 # Install postgresql
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -qq inotify-tools postgresql-9.3 && \
+RUN update-locale LANG=en_US.UTF-8 && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -qq postgresql-9.3 && \
     /etc/init.d/postgresql stop
 
+# Cleanup
+RUN apt-get clean
+
 # Add our config files
-ADD postgresql.conf /config/postgresql.conf
-ADD pg_hba.conf /config/pg_hba.conf
+ADD postgresql.conf /etc/postgresql/9.3/main/postgresql.conf
+ADD pg_hba.conf /etc/postgresql/9.3/main/pg_hba.conf
+ADD run /scripts/run
 
 # Create the data directory, copy existing pg data, and set permissions
-RUN mkdir /data/ && \
+RUN mkdir /data && \
     cp -R /var/lib/postgresql/9.3/main/* /data/ && \
-    chown postgres:postgres /data/ /config/ && \
-    chmod 700 /data/ /config/
-
-# Start postgresql and create a user/database
-ENV DB_USERNAME database_user
-ADD setup-db /setup-db
-RUN chmod +x /setup-db && /etc/init.d/postgresql start && /setup-db
-
-# Cleanup
-RUN apt-get clean && rm /setup-db
+    touch /data/.provision-me && \
+    chown -Rf postgres:postgres /data/ /scripts/run && \
+    chmod -Rf 700 /data/ /scripts/run
 
 VOLUME ["/data"]
 EXPOSE 5432
 USER postgres
-CMD /usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main
+CMD /scripts/run

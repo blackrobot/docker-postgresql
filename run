@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+set -e
+
+needs_provisioning="/data/.provision-me"
+
+function setup {
+  USER="${USER:-super_user}"
+  PASS="${PASS:-$(</dev/urandom tr -dc '[:alnum:]' | head -c 20)}"
+
+  echo
+  echo -e "\tCreating the superuser:"
+  echo -e "\t  user -> \033[1m${USER}\033[0m"
+  echo -e "\t  pass -> \033[1m${PASS}\033[0m"
+  echo
+
+  psql -q <<-EOF
+    CREATE ROLE $USER WITH ENCRYPTED PASSWORD '$PASS';
+    ALTER ROLE $USER WITH SUPERUSER;
+    ALTER ROLE $USER WITH LOGIN;
+EOF
+}
+
+function holdup {
+  while [[ ! -e /tmp/postgresql.pid ]]; do
+    sleep 1
+  done
+
+  setup && rm $needs_provisioning
+}
+
+if [[ -e $needs_provisioning ]]; then
+  echo "[ Waiting for database to start... ]"
+  holdup &
+fi
+
+echo "Starting PostgreSQL..."
+/usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main
