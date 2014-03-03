@@ -31,5 +31,4 @@ RUN mkdir /data && \
 
 VOLUME ["/data"]
 EXPOSE 5432
-USER postgres
 CMD /scripts/run

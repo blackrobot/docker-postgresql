@@ -6,6 +6,8 @@ set -e
 needs_provisioning="/data/.provision-me"
 
 function setup {
+  chown -Rf postgres:postgres /data
+
   USER="${USER:-super_user}"
   PASS="${PASS:-$(</dev/urandom tr -dc '[:alnum:]' | head -c 20)}"
 
@@ -15,11 +17,11 @@ function setup {
   echo -e "\t  pass -> \033[1m${PASS}\033[0m"
   echo
 
-  psql -q <<-EOF
+  su postgres -c "psql -q <<-EOF
     CREATE ROLE $USER WITH ENCRYPTED PASSWORD '$PASS';
     ALTER ROLE $USER WITH SUPERUSER;
     ALTER ROLE $USER WITH LOGIN;
-EOF
+EOF"
 }
 
 function holdup {
@@ -36,4 +38,4 @@ if [[ -e $needs_provisioning ]]; then
 fi
 
 echo "Starting PostgreSQL..."
-/usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main
+su postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main"
