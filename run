@@ -4,6 +4,7 @@
 set -e
 
 needs_provisioning="/.provision-me"
+data_dir="/data"
 
 function setup {
   USER="${USER:-super_user}"
@@ -32,11 +33,16 @@ function holdup {
 
 if [[ -e $needs_provisioning ]]; then
   echo "[ Waiting for database to start... ]"
+
+  if [[ ! "$(ls -A $data_dir)" ]]; then
+    cp -R /var/lib/postgresql/9.3/main/* $data_dir
+  fi
+
+  chown -R postgres $data_dir
+  chmod -R 700 $data_dir
+
   holdup &
 fi
-
-# Make sure postgres owns the directory
-chown -Rf postgres:postgres /data
 
 echo "Starting PostgreSQL..."
 su postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main"
