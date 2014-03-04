@@ -3,7 +3,7 @@
 
 set -e
 
-needs_provisioning="/data/.provision-me"
+needs_provisioning="/.provision-me"
 
 function setup {
   chown -Rf postgres:postgres /data

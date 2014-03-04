@@ -25,9 +25,9 @@ ADD run /scripts/run
 # Create the data directory, copy existing pg data, and set permissions
 RUN mkdir /data && \
     cp -R /var/lib/postgresql/9.3/main/* /data/ && \
-    touch /data/.provision-me && \
+    touch /.provision-me && \
     chown -Rf postgres:postgres /data/ /scripts/run && \
-    chmod -Rf 700 /data/ /scripts/run
+    chmod -Rf 700 /data/ /scripts/run /.provision-me
 
 VOLUME ["/data"]
 EXPOSE 5432
