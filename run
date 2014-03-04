@@ -6,8 +6,6 @@ set -e
 needs_provisioning="/.provision-me"
 
 function setup {
-  chown -Rf postgres:postgres /data
-
   USER="${USER:-super_user}"
   PASS="${PASS:-$(</dev/urandom tr -dc '[:alnum:]' | head -c 20)}"
 
@@ -36,6 +34,9 @@ if [[ -e $needs_provisioning ]]; then
   echo "[ Waiting for database to start... ]"
   holdup &
 fi
+
+# Make sure postgres owns the directory
+chown -Rf postgres:postgres /data
 
 echo "Starting PostgreSQL..."
 su postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /etc/postgresql/9.3/main"
