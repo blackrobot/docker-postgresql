@@ -11,7 +11,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /et
 
 # Install postgresql
 RUN update-locale LANG=en_US.UTF-8 && DEBIAN_FRONTEND=noninteractive \
-    apt-get install -qq postgresql-9.3 postgresql-server-dev-9.3 && \
+    apt-get install -qq postgresql-9.3 postgresql-server-dev-9.3 postgresql-contrib-9.3 && \
     /etc/init.d/postgresql stop
 
 # Cleanup
