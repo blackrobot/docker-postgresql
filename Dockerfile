@@ -5,17 +5,23 @@ FROM damon/base
 ENV LANGUAGE en_US.UTF-8
 
 # Add the repository to our sources list
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /etc/apt/sources.list && \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" >> /etc/apt/sources.list && \
     curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update -qq
 
 # Install postgresql
-RUN update-locale LANG=en_US.UTF-8 && DEBIAN_FRONTEND=noninteractive \
-    apt-get install -qq postgresql-9.3 postgresql-server-dev-9.3 postgresql-contrib-9.3 && \
+RUN update-locale LANG=en_US.UTF-8 && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      postgresql-9.3 \
+      postgresql-server-dev-9.3 \
+      postgresql-contrib-9.3 \
+      postgresql-9.3-postgis-2.1 \
+      postgresql-9.3-postgis-scripts \
+      postgresql-server-dev-all && \
     /etc/init.d/postgresql stop
 
 # Cleanup
-RUN apt-get clean
+RUN apt-get clean && apt-get -y autoremove
 
 # Add our config files
 ADD postgresql.conf /etc/postgresql/9.3/main/postgresql.conf
@@ -28,6 +34,11 @@ RUN mkdir /data && \
     touch /.provision-me && \
     chown -Rf postgres:postgres /data/ /scripts/run && \
     chmod -Rf 700 /data/ /scripts/run /.provision-me
+
+# Defaults
+ENV DB_USER super_user
+ENV DB_PASS super_user
+ENV DB_NAME super_user
 
 VOLUME ["/data"]
 EXPOSE 5432

@@ -7,19 +7,20 @@ needs_provisioning="/.provision-me"
 data_dir="/data"
 
 function setup {
-  USER="${USER:-super_user}"
-  PASS="${PASS:-$(</dev/urandom tr -dc '[:alnum:]' | head -c 20)}"
-
   echo
-  echo -e "\tCreating the superuser:"
-  echo -e "\t  user -> \033[1m${USER}\033[0m"
-  echo -e "\t  pass -> \033[1m${PASS}\033[0m"
+  echo -e "\tCreating the superuser and database:"
+  echo -e "\t  user -> \033[1m${DB_USER}\033[0m"
+  echo -e "\t  pass -> \033[1m${DB_PASS}\033[0m"
+  echo -e "\t  db   -> \033[1m${DB_NAME}\033[0m"
   echo
 
-  su postgres -c "psql -q <<-EOF
-    CREATE ROLE $USER WITH ENCRYPTED PASSWORD '$PASS';
-    ALTER ROLE $USER WITH SUPERUSER;
-    ALTER ROLE $USER WITH LOGIN;
+  su postgres -c "psql -q -d template1 <<-EOF
+    CREATE ROLE $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASS';
+    ALTER ROLE $DB_USER WITH SUPERUSER;
+    ALTER ROLE $DB_USER WITH LOGIN;
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION postgis_topology;
+    CREATE DATABASE $DB_NAME WITH OWNER $DB_USER TEMPLATE template1;
 EOF"
 }
 
