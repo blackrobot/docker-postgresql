@@ -18,6 +18,7 @@ ENV DB_PASS super_user
 ENV DB_NAME super_user
 
 COPY ./custom.postgresql.conf /
+COPY ./database-initialize.sql /
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
