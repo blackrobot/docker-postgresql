@@ -15,7 +15,7 @@ RUN apt-get update \
 # Defaults
 ENV DB_USER super_user
 ENV DB_PASS super_user
-ENV DB_NAME default
+ENV DB_NAME super_user
 ENV DB_EXTENSIONS postgis postgis_topology
 
 COPY ./custom.postgresql.conf /
