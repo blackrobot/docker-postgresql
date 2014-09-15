@@ -15,10 +15,9 @@ RUN apt-get update \
 # Defaults
 ENV DB_USER super_user
 ENV DB_PASS super_user
-ENV DB_NAME super_user
+ENV DB_NAME default
 
 COPY ./custom.postgresql.conf /
-COPY ./database-initialize.sql /
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

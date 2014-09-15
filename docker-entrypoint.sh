@@ -2,12 +2,19 @@
 
 set -e
 
+function pg_cmd {
+  psql -q -U postgres -d template1 -c "${1}"
+}
+
 function setup {
   while [[ ! -e /tmp/postgresql.pid ]]; do
     sleep 1
   done
 
-  psql -U postgres -d template1 -q < /database-initialize.sql
+  pg_cmd "CREATE EXTENSION postgis;"
+  pg_cmd "CREATE EXTENSION postgis_topology;"
+  pg_cmd "CREATE USER ${DB_USER} WITH SUPERUSER ENCRYPTED PASSWORD '${DB_PASS}';"
+  pg_cmd "CREATE DATABASE ${DB_NAME} WITH TEMPLATE 'template1' OWNER ${DB_USER};"
 }
 
 if [[ "$1" == 'postgres' ]]; then
