@@ -14,7 +14,7 @@ function setup {
   pg_cmd "CREATE EXTENSION postgis;"
   pg_cmd "CREATE EXTENSION postgis_topology;"
   pg_cmd "CREATE USER ${DB_USER} WITH SUPERUSER ENCRYPTED PASSWORD '${DB_PASS}';"
-  pg_cmd "CREATE DATABASE ${DB_NAME} WITH TEMPLATE 'template1' OWNER ${DB_USER};"
+  pg_cmd "CREATE DATABASE ${DB_NAME} TEMPLATE template1 OWNER ${DB_USER};"
 }
 
 if [[ "$1" == 'postgres' ]]; then
