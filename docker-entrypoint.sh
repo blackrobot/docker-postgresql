@@ -3,7 +3,7 @@
 set -e
 
 function pg_cmd {
-  psql -q -U postgres -d template1 -c "${1}"
+  psql -qe -U postgres -d template1 -c "${1}"
 }
 
 function setup {
@@ -11,8 +11,9 @@ function setup {
     sleep 1
   done
 
-  pg_cmd "CREATE EXTENSION postgis;"
-  pg_cmd "CREATE EXTENSION postgis_topology;"
+  for extension in $DB_EXTENSIONS; do
+    pg_cmd "CREATE EXTENSION ${extension};"
+  done
   pg_cmd "CREATE USER ${DB_USER} WITH SUPERUSER ENCRYPTED PASSWORD '${DB_PASS}';"
   pg_cmd "CREATE DATABASE ${DB_NAME} TEMPLATE template1 OWNER ${DB_USER};"
 }

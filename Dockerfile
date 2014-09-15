@@ -16,6 +16,7 @@ RUN apt-get update \
 ENV DB_USER super_user
 ENV DB_PASS super_user
 ENV DB_NAME default
+ENV DB_EXTENSIONS postgis postgis_topology
 
 COPY ./custom.postgresql.conf /
 COPY ./docker-entrypoint.sh /
