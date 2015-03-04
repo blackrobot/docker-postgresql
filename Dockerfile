@@ -16,7 +16,7 @@ RUN apt-get update \
 ENV DB_USER super_user
 ENV DB_PASS super_user
 ENV DB_NAME super_user
-ENV DB_EXTENSIONS postgis postgis_topology pg_trgm
+ENV DB_EXTENSIONS postgis postgis_topology pg_trgm fuzzystrmatch
 
 COPY ./custom.postgresql.conf /
 COPY ./docker-entrypoint.sh /
