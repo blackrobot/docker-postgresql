@@ -1,5 +1,5 @@
 # damon/postgresql:testing
 
-FROM damon/postgresql:latest
+FROM damon/postgresql
 
 COPY ./custom.postgresql.conf /
