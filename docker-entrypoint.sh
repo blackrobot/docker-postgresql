@@ -2,6 +2,10 @@
 
 set -e
 
+DB_USER=${POSTGRES_USER:-$DB_USER}
+DB_PASS=${POSTGRES_PASS:-$DB_PASS}
+DB_NAME=${POSTGRES_DB:-$DB_NAME}
+
 function pg_cmd {
   psql -qe -U postgres -d template1 -c "${1}"
 }
